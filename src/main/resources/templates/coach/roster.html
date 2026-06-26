@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{roster.title}">Roster - Badminton Club</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #1f2937; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .table-card { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #f9fafb; padding: 14px 20px; font-size: 12px; text-transform: uppercase; color: #4b5563; border-bottom: 1px solid #e5e7eb; text-align: left; }
+        td { padding: 14px 20px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
+        .btn-primary { background-color: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .status-select { padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; outline: none; }
+        .alert-success { background-color: #def7ec; color: #03543f; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; }
+
+        /* Direct maps for select dropdown colors */
+        .select-present { color: #03543f; background-color: #def7ec; }
+        .select-absent { color: #9b1c1c; background-color: #fde8e8; }
+        .select-excused { color: #854d0e; background-color: #fef08a; }
+        .select-pending { color: #374151; background-color: #f3f4f6; }
+        .select-cancelled { color: #111827; background-color: #e5e7eb; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+
+    <div th:if="${successMessage}" class="alert-success" th:text="${successMessage}"></div>
+
+    <div class="header-row">
+        <div>
+            <a th:href="@{/coach/sessions}" style="color: #6b7280; text-decoration: none; font-size: 14px;">
+                &larr; <span th:remove="tag" th:text="#{roster.backLink}">Back to Sessions</span>
+            </a>
+            <h1 style="font-size: 24px; margin: 10px 0 0 0;">
+                <span th:remove="tag" th:text="#{roster.heading}">Roster for</span> <span th:text="${sessionDate}"></span>
+            </h1>
+        </div>
+        <button type="submit" form="attendanceForm" class="btn-primary" th:text="#{roster.btn.save}">Save All Changes</button>
+    </div>
+
+    <div class="table-card">
+        <form id="attendanceForm" th:action="@{/coach/sessions/{date}/update(date=${sessionDate})}" method="post">
+            <table>
+                <thead>
+                <tr>
+                    <th th:text="#{roster.table.name}">Member Name</th>
+                    <th th:text="#{roster.table.email}">Email</th>
+                    <th th:text="#{roster.table.status}">Attendance Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="record : ${roster}">
+                    <td style="font-weight: 600; color: #111827;" th:text="${record.user.firstName + ' ' + record.user.lastName}">Name</td>
+                    <td th:text="${record.user.email}">Email</td>
+                    <td>
+                        <select th:name="'status_' + ${record.id}"
+                                class="status-select"
+                                th:classappend="${record.status == 'PRESENT' ? 'select-present' :
+                                                 (record.status == 'ABSENT' ? 'select-absent' :
+                                                 (record.status == 'EXCUSED' ? 'select-excused' :
+                                                 (record.status == 'CANCELLED' ? 'select-cancelled' : 'select-pending')))}">
+                            <option value="PENDING" th:selected="${record.status == 'PENDING'}" th:text="#{status.pending}">PENDING</option>
+                            <option value="PRESENT" th:selected="${record.status == 'PRESENT'}" th:text="#{status.present}">PRESENT</option>
+                            <option value="ABSENT" th:selected="${record.status == 'ABSENT'}" th:text="#{status.absent}">ABSENT</option>
+                            <option value="EXCUSED" th:selected="${record.status == 'EXCUSED'}" th:text="#{status.excused}">EXCUSED</option>
+                            <option value="CANCELLED" th:selected="${record.status == 'CANCELLED'}" th:text="#{status.cancelled}">CANCELLED</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(roster)}">
+                    <td colspan="3" style="text-align: center; color: #9ca3af; padding: 30px;" th:text="#{roster.empty}">
+                        No roster data found for this date.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+</body>
+</html>

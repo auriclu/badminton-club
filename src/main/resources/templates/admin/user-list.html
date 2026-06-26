@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{admin.users.title}">Manage Users - Admin Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #1f2937; }
+        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+        h1 { margin: 0 0 20px 0; font-size: 24px; color: #111827; }
+        .table-container { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #f9fafb; padding: 16px 20px; font-size: 13px; text-transform: uppercase; color: #4b5563; border-bottom: 1px solid #e5e7eb; text-align: left; }
+        td { padding: 16px 20px; border-bottom: 1px solid #e5e7eb; font-size: 14px; vertical-align: middle; }
+        select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; background-color: #fff; color: #1f2937; font-size: 13px; outline: none; min-width: 120px; }
+        select:focus { border-color: #1a56db; }
+        button { background: #1a56db; color: white; border: none; padding: 8px 14px; cursor: pointer; border-radius: 6px; font-size: 13px; font-weight: 600; transition: background 0.2s; }
+        button:hover { background: #1e429f; }
+        .lang-switch-box { display: flex; justify-content: flex-end; gap: 8px; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
+        .lang-switch-box a { color: #1a56db; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <h1 th:text="#{admin.users.heading}">Manage Club Users</h1>
+
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{admin.users.table.email}">Email Address</th>
+                <th th:text="#{admin.users.table.role}">Current Role</th>
+                <th th:text="#{admin.users.table.actions}">Promote / Demote To</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.email}" style="font-weight: 500;">user@email.com</td>
+                <td>
+                    <span th:text="${user.role}" style="font-family: monospace; font-weight: 700; color: #4b5563;">GUEST</span>
+                </td>
+                <td>
+                    <form th:action="@{/admin/promote}" method="POST" style="display: flex; gap: 10px; align-items: center;">
+                        <input type="hidden" name="userId" th:value="${user.userId}">
+                        <select name="newRole">
+                            <option value="GUEST" th:selected="${user.role.name() == 'GUEST'}" th:text="#{admin.users.role.guest}">Guest</option>
+                            <option value="MEMBER" th:selected="${user.role.name() == 'MEMBER'}" th:text="#{admin.users.role.member}">Member</option>
+                            <option value="COACH" th:selected="${user.role.name() == 'COACH'}" th:text="#{admin.users.role.coach}">Coach</option>
+                            <option value="ADMIN" th:selected="${user.role.name() == 'ADMIN'}" th:text="#{admin.users.role.admin}">Admin</option>
+                        </select>
+                        <button type="submit" th:text="#{admin.users.btn.update}">Update</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(users)}">
+                <td colspan="3" style="text-align: center; color: #6b7280; padding: 40px; font-style: italic;" th:text="#{admin.users.empty}">No registered users found in the system.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{profile.title}">My Profile - Badminton Club</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #1f2937; }
+        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+        .profile-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-top: 4px solid #1a56db; }
+        h1 { margin: 0 0 5px 0; font-size: 24px; color: #111827; }
+        .meta-text { color: #6b7280; font-size: 14px; margin-bottom: 20px; }
+        .info-row { display: flex; border-bottom: 1px solid #f3f4f6; padding: 14px 0; font-size: 15px; }
+        .info-label { width: 200px; font-weight: 600; color: #4b5563; }
+        .info-value { color: #111827; }
+        ul { padding-left: 20px; margin: 0; }
+        li { margin-bottom: 8px; color: #374151; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+    <div class="profile-card">
+        <h1 th:text="${user.firstName + ' ' + user.lastName}">Member Name</h1>
+        <p class="meta-text" th:text="#{profile.meta.id} + ' #' + ${user.userId}">Account ID Reference: #10</p>
+
+        <div class="info-row">
+            <div class="info-label" th:text="#{profile.label.email}">Email Address</div>
+            <div class="info-value" th:text="${user.email}">user@example.com</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label" th:text="#{profile.label.title}">Assigned Club Title</div>
+            <div class="info-value" style="font-weight: 700; color: #1a56db;" th:text="${clubTitle}">Title</div>
+        </div>
+        <div class="info-row" style="border-bottom: none; flex-direction: column; gap: 10px;">
+            <div class="info-label" th:text="#{profile.label.responsibilities}">Core Business Responsibilities</div>
+            <div class="info-value">
+                <ul>
+                    <li th:each="task : ${responsibilities}" th:text="${task}">Task Details</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

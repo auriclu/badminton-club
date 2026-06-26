@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{admin.dash.title}">Admin Dashboard - Badminton Club</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #1f2937; }
+        .dashboard-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        h1 { margin: 0; color: #111827; font-size: 24px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 4px solid #1a56db; }
+        .stat-card.pending { border-left-color: #d97706; }
+        .stat-card.rackets { border-left-color: #057a55; }
+        .stat-title { font-size: 13px; color: #6b7280; text-transform: uppercase; font-weight: 700; }
+        .stat-value { font-size: 32px; font-weight: 700; margin-top: 8px; color: #111827; }
+        .table-container { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #f9fafb; padding: 16px 20px; font-size: 13px; text-transform: uppercase; color: #4b5563; border-bottom: 1px solid #e5e7eb; }
+        td { padding: 16px 20px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
+        .status-badge { display: inline-block; padding: 4px 10px; font-size: 12px; border-radius: 9999px; font-weight: 600; text-transform: uppercase; }
+        .status-confirmed { background-color: #def7ec; color: #03543f; }
+        .status-pending { background-color: #fef3c7; color: #92400e; }
+        .btn-action { padding: 6px 12px; font-size: 13px; font-weight: 600; border-radius: 4px; text-decoration: none; border: none; cursor: pointer; }
+        .btn-approve { background-color: #057a55; color: white; }
+        .btn-cancel { background-color: #e5e7eb; color: #1f2937; border: 1px solid #d1d5db; }
+        .btn-cancel:hover { background-color: #d1d5db; }
+        .lang-switcher { font-size: 14px; font-weight: bold; }
+        .lang-switcher a { color: #1a56db; text-decoration: none; margin: 0 5px; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="dashboard-container">
+    <div class="header">
+        <div>
+            <h1 th:text="#{admin.dash.heading}">Club Management Console</h1>
+            <p th:text="#{admin.dash.subheading}">Reviewing active registrations and system status.</p>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-title" th:text="#{admin.dash.stat.total}">Total Registrations</div>
+            <div class="stat-value" th:text="${totalCount}">0</div>
+        </div>
+        <div class="stat-card pending">
+            <div class="stat-title" th:text="#{admin.dash.stat.pending}">Awaiting Approval</div>
+            <div class="stat-value" th:text="${pendingCount}">0</div>
+        </div>
+        <div class="stat-card rackets">
+            <div class="stat-title" th:text="#{admin.dash.stat.rackets}">Rackets Reserved</div>
+            <div class="stat-value" th:text="${racketRentalCount}">0</div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{admin.dash.table.ticketId}">Ticket ID</th>
+                <th th:text="#{admin.dash.table.playerName}">Player Name</th>
+                <th th:text="#{admin.dash.table.email}">Email Address</th>
+                <th th:text="#{admin.dash.table.event}">Event</th>
+                <th th:text="#{admin.dash.table.skill}">Skill</th>
+                <th th:text="#{admin.dash.table.racket}">Racket</th>
+                <th th:text="#{admin.dash.table.status}">Status</th>
+                <th th:text="#{admin.dash.table.actions}">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="reg : ${registrations}">
+                <td style="font-family: monospace; font-weight: 700;" th:text="'#' + ${reg.registrationId}">#101</td>
+                <td th:text="${reg.guestName != null && !reg.guestName.isEmpty()} ? ${reg.guestName} : (#{admin.dash.table.member} + ' (ID: ' + ${reg.userId} + ')')">John Doe</td>
+                <td th:text="${reg.guestEmail != null && !reg.guestEmail.isEmpty()} ? ${reg.guestEmail} : #{admin.dash.table.na}">john@example.com</td>
+                <td th:text="${eventNames[reg.eventId]} ?: ('Event #' + ${reg.eventId})">Event Name</td>
+                <td th:text="${reg.skillLevel}">INTERMEDIATE</td>
+                <td th:text="${reg.needsRacket} ? #{admin.dash.table.yes} : #{admin.dash.table.no}">No</td>
+                <td>
+                    <span class="status-badge"
+                          th:classappend="${#strings.equalsIgnoreCase(reg.status, 'CONFIRMED')} ? 'status-confirmed' : 'status-pending'"
+                          th:text="${reg.status}">PENDING</span>
+                </td>
+                <td>
+                    <a th:if="${#strings.equalsIgnoreCase(reg.status, 'PENDING')}"
+                       th:href="@{/admin/approve/{id}(id=${reg.registrationId})}"
+                       class="btn-action btn-approve" th:text="#{admin.dash.action.approve}">Approve</a>
+
+                    <form th:action="@{/admin/cancel/{id}(id=${reg.registrationId})}"
+                          method="POST"
+                          style="display:inline;">
+                        <button type="submit"
+                                class="btn-action btn-cancel"
+                                th:data-confirm="#{admin.dash.confirm.cancel}"
+                                onclick="return confirm(this.getAttribute('data-confirm'))"
+                                th:text="#{admin.dash.action.cancel}">
+                            Cancel
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

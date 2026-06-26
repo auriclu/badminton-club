@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{events.pool.title}">Club Events - Badminton Club</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #1f2937; }
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        .section-card { background: white; padding: 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        h2 { margin-top: 0; font-size: 18px; color: #111827; border-bottom: 1px solid #f3f4f6; padding-bottom: 12px; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #f9fafb; padding: 12px 16px; font-size: 12px; text-transform: uppercase; color: #4b5563; border-bottom: 1px solid #e5e7eb; text-align: left; }
+        td { padding: 14px 16px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
+        .btn-join { background: #1a56db; color: white; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; }
+        .btn-join:hover { background: #1e429f; }
+        .badge-reg { background: #def7ec; color: #03543f; padding: 4px 8px; font-size: 12px; font-weight: 600; border-radius: 4px; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+
+    <div class="section-card">
+        <h2 th:text="#{events.pool.available.heading}">Available Events for Sign-up</h2>
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{events.pool.th.name}">Event Name</th>
+                <th th:text="#{events.pool.th.date}">Target Date</th>
+                <th th:text="#{events.pool.th.time}">Time Windows</th>
+                <th th:text="#{events.pool.th.action}">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="event : ${availableEvents}">
+                <td style="font-weight: 600; color: #111827;" th:text="${event.name}">Event Name</td>
+                <td th:text="${event.eventDate}">2026-06-20</td>
+                <td th:text="${event.startTime + ' - ' + event.endTime}">18:00 - 20:00</td>
+                <td><a th:href="@{/events/register/{id}(id=${event.eventId})}" class="btn-join" th:text="#{events.pool.btn.register}">Register</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-card">
+        <h2 th:text="#{events.pool.my.heading}">My Scheduled Registrations</h2>
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{events.pool.th.regId}">Registration ID</th>
+                <th th:text="#{events.pool.th.name}">Event Name</th>
+                <th th:text="#{events.pool.th.status}">Booking Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="reg : ${myRegistrations}">
+                <td style="font-family: monospace; font-weight: 700;" th:text="'#' + ${reg.registrationId}">#501</td>
+
+                <td th:text="${eventNameMap.get(reg.eventId)}">Event Name</td>
+
+                <td>
+                    <span class="badge-reg" th:text="#{'reg.status.' + ${#strings.toLowerCase(reg.status)}}">CONFIRMED</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

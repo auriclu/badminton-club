@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{sessions.title}">Manage Sessions - Badminton Club</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #1f2937; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .action-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 30px; display: flex; gap: 15px; align-items: center; }
+        .table-card { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #f9fafb; padding: 14px 20px; font-size: 12px; text-transform: uppercase; color: #4b5563; border-bottom: 1px solid #e5e7eb; text-align: left; }
+        td { padding: 14px 20px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
+        .btn-primary { background-color: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; text-decoration: none; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .form-input { padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+    <h1 style="font-size: 24px; margin-bottom: 20px;" th:text="#{sessions.heading}">Training Sessions</h1>
+
+    <div class="action-card">
+        <div>
+            <h3 style="margin: 0 0 5px 0; font-size: 16px;" th:text="#{sessions.schedule.heading}">Schedule New Training</h3>
+            <p style="margin: 0; font-size: 13px; color: #6b7280;" th:text="#{sessions.schedule.subheading}">Initialize a blank roster for all active members.</p>
+        </div>
+        <form th:action="@{/coach/sessions/new}" method="post" style="margin-left: auto; display: flex; gap: 10px;">
+            <input type="date" name="trainingDate" class="form-input" required>
+            <button type="submit" class="btn-primary" th:text="#{sessions.schedule.btn}">Generate Roster</button>
+        </form>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{sessions.table.date}">Training Date</th>
+                <th th:text="#{sessions.table.action}">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="date : ${sessionDates}">
+                <td th:text="${#temporals.format(date, 'MMMM dd, yyyy')}" style="font-weight: 600;">Date</td>
+                <td>
+                    <a th:href="@{/coach/sessions/{date}(date=${date})}" style="color: #2563eb; text-decoration: none; font-weight: 600;">
+                        <span th:remove="tag" th:text="#{sessions.table.manage}">Manage Attendance</span> &rarr;
+                    </a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(sessionDates)}">
+                <td colspan="2" style="text-align: center; color: #9ca3af; padding: 30px;" th:text="#{sessions.empty}">
+                    No training sessions have been created yet.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{admin.event.create.title}">Create New Event - Admin</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; }
+        .form-card { max-width: 600px; margin: 20px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #111827; font-size: 20px; border-bottom: 2px solid #f3f4f6; padding-bottom: 15px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 5px; color: #374151; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
+        button { background: #1a56db; color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px; }
+        button:hover { background: #1e429f; }
+        .lang-switcher { display: flex; justify-content: flex-end; gap: 10px; font-size: 13px; margin-bottom: 15px; font-weight: bold; }
+        .lang-switcher a { color: #1a56db; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="form-card">
+    <h1 th:text="#{admin.event.create.heading}">Create New Badminton Event</h1>
+    <form th:action="@{/admin/events/new}" th:object="${event}" method="POST">
+        <div class="form-group">
+            <label th:text="#{admin.event.name}">Event Name</label>
+            <input type="text" th:field="*{name}" th:placeholder="#{admin.event.name.placeholder}" required>
+        </div>
+
+        <div class="form-group">
+            <label th:text="#{admin.event.description}">Description</label>
+            <textarea th:field="*{description}" th:placeholder="#{admin.event.description.placeholder}" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label th:text="#{admin.event.type}">Event Type</label>
+            <select th:field="*{eventType}" required>
+                <option value="" disabled selected th:text="#{admin.event.type.select}">Select category...</option>
+                <option th:each="type : ${T(com.club.badminton.model.EventType).values()}"
+                        th:value="${type}" th:text="${type}"></option>
+            </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label th:text="#{admin.event.date}">Date</label>
+                <input type="date" th:field="*{eventDate}" required>
+            </div>
+            <div class="form-group">
+                <label th:text="#{admin.event.maxParticipants}">Max Participants</label>
+                <input type="number" th:field="*{maxParticipants}" min="1" required>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label th:text="#{admin.event.startTime}">Start Time</label>
+                <input type="time" th:field="*{startTime}" required>
+            </div>
+            <div class="form-group">
+                <label th:text="#{admin.event.endTime}">End Time</label>
+                <input type="time" th:field="*{endTime}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label th:text="#{admin.event.deadline}">Registration Deadline</label>
+            <input type="datetime-local" th:field="*{registrationDeadline}" required>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" th:field="*{requiresPartner}" style="width: auto;">
+            <label style="margin: 0;" th:text="#{admin.event.requiresPartner}">Requires Partner</label>
+        </div>
+
+        <button type="submit" th:text="#{admin.event.create.btn}">Create Event</button>
+    </form>
+
+    <div th:if="${errorMessage}" style="color: red; padding: 10px; border: 1px solid red;">
+        <p th:text="${errorMessage}"></p>
+    </div>
+
+    <form th:action="@{/admin/events/create}" method="POST">
+    </form>
+</div>
+
+</body>
+</html>

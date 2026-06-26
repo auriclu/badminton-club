@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Navbar Fragment</title>
+</head>
+<body>
+
+<nav th:fragment="navbar" style="background: #111827; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; color: white; font-family: 'Segoe UI', sans-serif;">
+
+    <a th:href="@{/}" style="color: white; font-weight: 700; text-decoration: none; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+        🏸 <span th:text="#{nav.brand}">Badminton Club</span>
+    </a>
+
+    <div style="display: flex; gap: 24px; align-items: center;">
+
+        <th:block th:if="${session.currentUser != null && session.currentUser.role.name() == 'ADMIN'}">
+            <a th:href="@{/admin/dashboard}" th:text="#{nav.admin.dashboard}" style="color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 600;">Dashboard</a>
+            <a th:href="@{/admin/events}" th:text="#{nav.admin.manageEvents}" style="color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 600;">Manage Events</a>
+            <a th:href="@{/admin/rackets}" th:text="#{nav.admin.racketsPool}" style="color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 600;">Rackets Pool</a>
+            <a th:href="@{/admin/users}" th:text="#{nav.admin.users}" style="color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 600;">Users</a>
+        </th:block>
+
+        <th:block th:if="${session.currentUser != null && session.currentUser.role.name() == 'COACH'}">
+            <a th:href="@{/coach/sessions}" th:text="#{nav.coach.manageSessions}" style="color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 600;">Manage Sessions</a>
+        </th:block>
+
+        <th:block th:if="${session.currentUser != null && (session.currentUser.role.name() == 'MEMBER' || session.currentUser.role.name() == 'GUEST')}">
+            <a th:href="@{/member/events}" th:text="#{nav.member.eventsPool}" style="color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 600;">Events Pool</a>
+        </th:block>
+
+        <th:block th:if="${session.currentUser != null && session.currentUser.role.name() == 'MEMBER'}">
+            <a th:href="@{/member/attendance}" th:text="#{nav.member.attendance}" style="color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 600;">My Attendance</a>
+            <a th:href="@{/member/profile}" th:text="#{nav.member.profile}" style="color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 600;">My Profile</a>
+        </th:block>
+
+        <span th:if="${session.currentUser != null}" style="color: #4b5563;">|</span>
+
+        <a th:if="${session.currentUser != null}" th:href="@{/auth/logout}" th:text="#{nav.auth.logout}" style="color: #f87171; text-decoration: none; font-size: 14px; font-weight: 600;">Logout</a>
+        <a th:if="${session.currentUser == null}" th:href="@{/auth/login}" th:text="#{nav.auth.login}" style="color: #34d399; text-decoration: none; font-size: 14px; font-weight: 600;">Login</a>
+
+        <span style="color: #4b5563;">|</span>
+
+        <div style="display: flex; gap: 6px; font-size: 14px; font-weight: 600;">
+            <a th:href="@{?(lang='en')}"
+               th:style="${#locale.language == 'en' ? 'color: #34d399; text-decoration: none;' : 'color: #9ca3af; text-decoration: none;'}">EN</a>
+            <span style="color: #4b5563;">/</span>
+            <a th:href="@{?(lang='ru')}"
+               th:style="${#locale.language == 'ru' ? 'color: #34d399; text-decoration: none;' : 'color: #9ca3af; text-decoration: none;'}">RU</a>
+        </div>
+
+    </div>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{attendance.title}">My Attendance - Badminton Club</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #1f2937; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: center; }
+        .stat-val { font-size: 28px; font-weight: 700; margin-top: 5px; color: #111827; }
+        .table-card { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #f9fafb; padding: 14px 20px; font-size: 12px; text-transform: uppercase; color: #4b5563; border-bottom: 1px solid #e5e7eb; text-align: left; }
+        td { padding: 14px 20px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
+        .status-badge { padding: 4px 10px; font-size: 11px; border-radius: 9999px; font-weight: 700; text-transform: uppercase; }
+
+        /* Direct maps matching our explicit conditional template expressions */
+        .badge-present { background: #def7ec; color: #03543f; }
+        .badge-absent { background: #fde8e8; color: #9b1c1c; }
+        .badge-pending { background: #f3f4f6; color: #374151; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+    <h1 style="font-size: 24px; margin-bottom: 20px;" th:text="#{attendance.heading}">Attendance Analytics</h1>
+
+    <div class="stats-grid">
+        <div class="stat-card" style="border-top: 4px solid #057a55;">
+            <div style="color: #6b7280; font-size: 12px; font-weight: 700; text-transform: uppercase;" th:text="#{attendance.rate}">Attendance Rate</div>
+            <div class="stat-val" th:text="${attendancePercentage} + '%'">0%</div>
+        </div>
+        <div class="stat-card" style="border-top: 4px solid #b91c1c;">
+            <div style="color: #6b7280; font-size: 12px; font-weight: 700; text-transform: uppercase;" th:text="#{attendance.absence.rate}">Absence Rate</div>
+            <div class="stat-val" th:text="${absentPercentage} + '%'">0%</div>
+        </div>
+        <div class="stat-card" style="border-top: 4px solid #4b5563;">
+            <div style="color: #6b7280; font-size: 12px; font-weight: 700; text-transform: uppercase;" th:text="#{attendance.pending}">Pending Review</div>
+            <div class="stat-val" th:text="${pendingCount}">0</div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{attendance.th.target}">Session Target</th>
+                <th th:text="#{attendance.th.window}">Schedule Event Window</th>
+                <th th:text="#{attendance.th.status}">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="record : ${attendanceList}">
+                <td style="font-weight: 600; color: #111827;" th:text="#{attendance.session.defaultName}">Regular Training Session</td>
+
+                <td th:text="${#temporals.format(record.trainingDate, 'MMMM dd, yyyy')}">Date Space</td>
+
+                <td>
+                        <span class="status-badge"
+                              th:classappend="${record.status == 'PRESENT' ? 'badge-present' : (record.status == 'ABSENT' ? 'badge-absent' : 'badge-pending')}"
+                              th:text="#{'status.' + ${#strings.toLowerCase(record.status)}}">STATUS</span>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(attendanceList)}">
+                <td colspan="3" style="text-align: center; color: #9ca3af; padding: 30px;" th:text="#{attendance.empty}">
+                    No training session attendance matches found for your club history profile.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

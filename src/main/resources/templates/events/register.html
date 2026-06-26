@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{events.reg.title}">Event Registration</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; padding: 0; margin: 0; color: #1f2937; }
+        .form-container { max-width: 500px; background: white; margin: 30px auto; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .error-alert { background-color: #fde8e8; color: #e02424; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #f87171; }
+        .field-error { color: #e02424; font-size: 13px; margin-top: 4px; display: block; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: bold; color: #374151; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .form-group input[type="checkbox"] { width: auto; margin-right: 8px; }
+        .checkbox-label { display: flex; align-items: center; font-weight: normal; cursor: pointer; }
+        .submit-btn { width: 100%; padding: 12px; background-color: #057a55; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .submit-btn:hover { background-color: #046c4e; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="form-container">
+    <h2>
+        <span th:remove="tag" th:text="#{events.reg.heading}">Register for:</span>
+        <span th:text="${event.name}">Event Name</span>
+    </h2>
+
+    <div class="error-alert" th:if="${businessError}" th:text="${businessError}"></div>
+
+    <form th:action="@{/events/register}" th:object="${registrationForm}" method="POST">
+        <input type="hidden" th:field="*{eventId}" />
+        <input type="hidden" th:field="*{userId}" />
+
+        <div class="form-group" th:if="*{userId == null}">
+            <label th:text="#{events.reg.label.name}">Full Name</label>
+            <input type="text" th:field="*{guestName}" required />
+            <span class="field-error" th:if="${#fields.hasErrors('guestName')}" th:errors="*{guestName}"></span>
+        </div>
+
+        <div class="form-group" th:if="*{userId == null}">
+            <label th:text="#{events.reg.label.email}">Email Address</label>
+            <input type="email" th:field="*{guestEmail}" required />
+            <span class="field-error" th:if="${#fields.hasErrors('guestEmail')}" th:errors="*{guestEmail}"></span>
+        </div>
+
+        <div class="form-group" th:if="*{userId == null}">
+            <label th:text="#{events.reg.label.phone}">Phone Number</label>
+            <input type="tel" th:field="*{guestPhone}" required />
+            <span class="field-error" th:if="${#fields.hasErrors('guestPhone')}" th:errors="*{guestPhone}"></span>
+        </div>
+
+        <div class="form-group">
+            <label th:text="#{events.reg.label.skill}">Playing Skill Level</label>
+            <select th:field="*{skillLevel}" required>
+                <option value="" th:text="#{events.reg.select.default}">-- Select Level --</option>
+                <option value="BEGINNER" th:text="#{events.reg.select.beginner}">Beginner</option>
+                <option value="INTERMEDIATE" th:text="#{events.reg.select.intermediate}">Intermediate</option>
+                <option value="ADVANCED" th:text="#{events.reg.select.advanced}">Advanced</option>
+            </select>
+            <span class="field-error" th:if="${#fields.hasErrors('skillLevel')}" th:errors="*{skillLevel}"></span>
+        </div>
+
+        <div class="form-group">
+            <label class="checkbox-label">
+                <input type="checkbox" th:field="*{needsRacket}" />
+                <span th:remove="tag" th:text="#{events.reg.label.racket}">I need to borrow a club racket</span>
+            </label>
+        </div>
+
+        <div class="form-group" th:if="${event.requiresPartner}">
+            <label th:text="#{events.reg.label.partner}">Partner Full Name</label>
+            <input type="text" th:field="*{partnerName}" />
+        </div>
+
+        <button type="submit" class="submit-btn" th:text="#{events.reg.btn.submit}">Submit Registration</button>
+    </form>
+</div>
+
+</body>
+</html>

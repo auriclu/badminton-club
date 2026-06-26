@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{signup.title}">Sign Up - Badminton Club</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .auth-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        .error-banner { background-color: #fde8e8; color: #e02424; padding: 10px; border: 1px solid #f87171; border-radius: 4px; margin-bottom: 15px; font-size: 14px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #374151; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .submit-btn { width: 100%; padding: 10px; background-color: #1a56db; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; font-weight: bold; }
+        .submit-btn:hover { background-color: #1e429f; }
+        .auth-prompt { margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 15px; color: #6b7280; }
+        .btn-link { color: #1a56db; text-decoration: none; font-weight: bold; }
+        .btn-link:hover { text-decoration: underline; }
+        .lang-switcher { text-align: center; margin-top: 20px; font-size: 13px; color: #9ca3af; }
+        .lang-switcher a { color: #4b5563; text-decoration: none; font-weight: bold; padding: 0 5px; }
+        .lang-switcher a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <h2 style="text-align: center; color: #111827; margin-top: 0;" th:text="#{signup.heading}">Create Your Account</h2>
+
+    <div class="error-banner" th:if="${errorMessage}">
+        <p style="margin: 0;" th:text="${errorMessage}"></p>
+    </div>
+
+    <form th:action="@{/auth/signup}" th:object="${signupForm}" method="POST">
+        <div class="form-group">
+            <label th:text="#{signup.firstName}">First Name</label>
+            <input type="text" th:field="*{firstName}" required />
+        </div>
+
+        <div class="form-group">
+            <label th:text="#{signup.lastName}">Last Name</label>
+            <input type="text" th:field="*{lastName}" required />
+        </div>
+
+        <div class="form-group">
+            <label th:text="#{signup.email}">Email Address</label>
+            <input type="email" th:field="*{email}" required />
+        </div>
+
+        <div class="form-group">
+            <label th:text="#{signup.password}">Password</label>
+            <input type="password" th:field="*{password}" required />
+        </div>
+
+        <button type="submit" class="submit-btn" th:text="#{signup.submit}">Sign Up</button>
+    </form>
+
+    <div class="auth-prompt">
+        <p style="margin: 0;">
+            <span th:text="#{signup.prompt}">Already have an account?</span><br>
+            <a th:href="@{/auth/login}" class="btn-link" th:text="#{signup.link.login}">Login here</a>
+        </p>
+    </div>
+
+    <div class="lang-switcher">
+        <a href="?lang=en">EN</a> | <a href="?lang=ru">RU</a>
+    </div>
+</div>
+
+</body>
+</html>
