@@ -84,7 +84,7 @@ public class EventController {
 
         EventRegistration reg = new EventRegistration();
         reg.setEventId(form.getEventId());
-        reg.setUserId(form.getUserId());
+        reg.setUserId(currentUser.getUserId());
         reg.setGuestName(form.getGuestName());
         reg.setGuestEmail(form.getGuestEmail());
         reg.setGuestPhone(form.getGuestPhone());
@@ -118,9 +118,7 @@ public class EventController {
 
         EventRegistration reg = registrationService.findById(id);
 
-        if (reg == null) return "redirect:/member/events";
-
         model.addAttribute("registration", reg);
-        return "events/status";
+        return "redirect:/member/events";
     }
 }
